@@ -3,16 +3,16 @@
 SDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 source "$SDIR/scripts/helpers.sh"
 
-gfw_status="#($SDIR/scripts/core.sh status)"
-gfw_status_interpolation="\#{gfw_status}"
+web_status_interpolation="\#{web_reachable_status}"
+web_status="#($SDIR/scripts/core.sh status)"
 
-gfw_status_rt="#($SDIR/scripts/core.sh rt)"
-gfw_status_rt_interpolation="\#{gfw_status_rt}"
+web_status_rt_interpolation="\#{web_reachable_rt}"
+web_status_rt="#($SDIR/scripts/core.sh rt)"
 
 do_interpolation() {
     local result=$1
-    result="${result/$gfw_status_interpolation/$gfw_status}"
-    result="${result/$gfw_status_rt_interpolation/$gfw_status_rt}"
+    result="${result/$web_status_interpolation/$web_status}"
+    result="${result/$web_status_rt_interpolation/$web_status_rt}"
     echo "$result"
 }
 
