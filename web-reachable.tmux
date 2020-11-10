@@ -10,8 +10,10 @@ gfw_status_rt="#($SDIR/scripts/core.sh rt)"
 gfw_status_rt_interpolation="\#{gfw_status_rt}"
 
 do_interpolation() {
-    echo "${1/$gfw_status_interpolation/$gfw_status}"
-    echo "${1/$gfw_status_rt_interpolation/$gfw_status_rt}"
+    local result=$1
+    result="${result/$gfw_status_interpolation/$gfw_status}"
+    result="${result/$gfw_status_rt_interpolation/$gfw_status_rt}"
+    echo "$result"
 }
 
 update_tmux_option() {
