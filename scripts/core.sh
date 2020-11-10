@@ -5,7 +5,7 @@ source "$SDIR/helpers.sh"
 
 refresh_status() {
     local rt url
-    url=$(get_tmux_option '@web_reachable_url' 'www.google.com')
+    url=$(get_tmux_option '@web_reachable_url' 'google.com')
     rt=$(curl -fsm "$1" -w '%{time_total}' "$url" -o /dev/null) || rt=-1
     rt=$(echo "($rt*1000)/1" | bc)
     set_tmux_option '@web_reachable_rt' "$rt"
