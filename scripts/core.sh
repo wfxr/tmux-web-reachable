@@ -12,16 +12,17 @@ refresh_status() {
 }
 
 update_status() {
-    local pre cur refresh_interval
+    local pre cur refresh_interval timeout
     cur=$(date +%s)
     pre=$(get_tmux_option "@web_reachable_ts" "0")
     refresh_interval=$(get_tmux_option "@web_reachable_refresh_interval" "10")
-
-    read -ra symbols    <<<"$(get_tmux_option '@web_reachable_symbols'    '🟢 🟡 🔴')"
-    read -ra thresholds <<<"$(get_tmux_option '@web_reachable_thresholds' '500 750')"
     timeout=$(( (thresholds[1] - 1) / 1000 + 1 ))
 
     rt=$(get_tmux_option "@web_reachable_rt" "-1")
+    if  (( rt < 0 || cur - pre > refresh_interval)); then
+        refresh_status "$timeout"
+        set_tmux_option '@web_reachable_ts' "$cur"
+    fi
     if (( rt < 0 )); then
         symbol_id=2
     elif (( rt < thresholds[0] )); then
@@ -31,15 +32,25 @@ update_status() {
     else
         symbol_id=2
     fi
-    if  (( rt < 0 || cur - pre > refresh_interval)); then
-        refresh_status "$timeout"
-        set_tmux_option '@web_reachable_ts' "$cur"
-    fi
     set_tmux_option '@web_reachable_status' "${symbols[$symbol_id]}"
 }
 
+initialized() {
+    [ "$(get_tmux_option "@web_reachable_initialized")" == 'true' ]
+}
+
+initialize() {
+    set_tmux_option '@web_reachable_initialized' "true"
+    set_tmux_option '@web_reachable_status' "${symbols[3]}"
+    set_tmux_option '@web_reachable_ts' "-1"
+    set_tmux_option '@web_reachable_rt' "-1"
+}
+
 main() {
-    update_status
+    read -ra symbols <<<"$(get_tmux_option '@web_reachable_symbols' '🟢 🟡 🔴 🔵')"
+    read -ra thresholds <<<"$(get_tmux_option '@web_reachable_thresholds' '500 750')"
+    if initialized; then update_status; else initialize; fi
+
     case $1 in
         rt )
             printf "%s" "$(get_tmux_option "@web_reachable_rt")"
