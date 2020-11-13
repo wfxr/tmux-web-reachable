@@ -12,7 +12,7 @@ refresh_status() {
 }
 
 update_status() {
-    local pre cur refresh_interval timeout
+    local pre cur refresh_interval timeout rt
     cur=$(date +%s)
     pre=$(get_tmux_option "@web_reachable_ts" "0")
     refresh_interval=$(get_tmux_option "@web_reachable_refresh_interval" "10")
@@ -22,6 +22,7 @@ update_status() {
     if  (( rt < 0 || cur - pre > refresh_interval)); then
         refresh_status "$timeout"
         set_tmux_option '@web_reachable_ts' "$cur"
+        rt=$(get_tmux_option "@web_reachable_rt" "-1")
     fi
     if (( rt < 0 )); then
         symbol_id=2
