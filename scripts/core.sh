@@ -48,8 +48,8 @@ initialize() {
 }
 
 main() {
-    read -ra symbols    <<<"$(get_tmux_option '@web_reachable_symbols'    '🔵 🟢 🟡 🔴')"
-    read -ra thresholds <<<"$(get_tmux_option '@web_reachable_thresholds' '500 750')"
+    IFS="|" read -ra symbols    <<<"$(get_tmux_option '@web_reachable_symbols'    '🔵|🟢|🟡|🔴')"
+    IFS=" " read -ra thresholds <<<"$(get_tmux_option '@web_reachable_thresholds' '500 750')"
     if initialized; then update_status; else initialize; fi
 
     case $1 in
