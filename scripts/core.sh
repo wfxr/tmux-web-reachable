@@ -25,13 +25,13 @@ update_status() {
         rt=$(get_tmux_option "@web_reachable_rt" "-1")
     fi
     if (( rt < 0 )); then
-        symbol_id=2
+        symbol_id=3
     elif (( rt < thresholds[0] )); then
-        symbol_id=0
-    elif (( rt < thresholds[1] )); then
         symbol_id=1
-    else
+    elif (( rt < thresholds[1] )); then
         symbol_id=2
+    else
+        symbol_id=3
     fi
     set_tmux_option '@web_reachable_status' "${symbols[$symbol_id]}"
 }
@@ -42,13 +42,13 @@ initialized() {
 
 initialize() {
     set_tmux_option '@web_reachable_initialized' "true"
-    set_tmux_option '@web_reachable_status' "${symbols[3]}"
+    set_tmux_option '@web_reachable_status' "${symbols[0]}"
     set_tmux_option '@web_reachable_ts' "-1"
     set_tmux_option '@web_reachable_rt' "-1"
 }
 
 main() {
-    read -ra symbols <<<"$(get_tmux_option '@web_reachable_symbols' '🟢 🟡 🔴 🔵')"
+    read -ra symbols    <<<"$(get_tmux_option '@web_reachable_symbols'    '🔵 🟢 🟡 🔴')"
     read -ra thresholds <<<"$(get_tmux_option '@web_reachable_thresholds' '500 750')"
     if initialized; then update_status; else initialize; fi
 
